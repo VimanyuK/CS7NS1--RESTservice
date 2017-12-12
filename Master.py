@@ -34,7 +34,6 @@ class master():
                 print('else') # for debugging, will be removed later
                 link = requests.get("https://api.github.com/repos/VimanyuK/CS7NS1-Chat-Server/commits?page={}&per_page=100".format(page_number), auth=(git_username, git_password))
             json_data = json.loads(link.text)
-            print(json_data) # for debugging, will be removed later
             if len(json_data) < 2:
                 pages = False
             else:
@@ -65,7 +64,7 @@ class fetchRepository(Resource):
         # check if the repository has been pulled
         if repo_args['pull_status'] == False:
             print('not pulled yet') # for debugging will be removed
-            return {'repo': "https://api.github.com/VimanyuK/CS7NS1-Chat-Server"}
+            return {'repo': "https://github.com/VimanyuK/CS7NS1-Chat-Server"}
         if repo_args['pull_status'] == True:
             print('pull status true') # for debugging will be removed
             self.server.current_workers += 1
