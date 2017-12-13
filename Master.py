@@ -25,13 +25,10 @@ class master():
         #to check if there are more than 1 page
         pages = True
         page_number = 1
-        print('while loop') # for debugging, will be removed later
         while pages:
             if len(git_username) ==0:
-                print('if') # for debugging, will be removed later
                 link = requests.get("https://api.github.com/repos/VimanyuK/CS7NS1-Chat-Server/commits?page={}&per_page=100".format(page_number))
             else:
-                print('else') # for debugging, will be removed later
                 link = requests.get("https://api.github.com/repos/VimanyuK/CS7NS1-Chat-Server/commits?page={}&per_page=100".format(page_number), auth=(git_username, git_password))
             json_data = json.loads(link.text)
             if len(json_data) < 2:
@@ -63,15 +60,12 @@ class fetchRepository(Resource):
         repo_args = self.reqparser.parse_args()
         # check if the repository has been pulled
         if repo_args['pull_status'] == False:
-            print('not pulled yet') # for debugging will be removed
             return {'repo': "https://github.com/VimanyuK/CS7NS1-Chat-Server"}
         if repo_args['pull_status'] == True:
-            print('pull status true') # for debugging will be removed
-            self.server.current_workers += 1
+            self.server.current_workers = self.server.current_workers +1
             #To start the timer when the required number of slaves are assigned
-            if self.server.current_workers == self.server.number_of_workers:
+            if int(self.server.current_workers) == int(self.server.number_of_workers):
                 self.start_time = time.time()
-                print('Timer Started') # for debugging will be removed
             print("WORKER NUMBER: {}".format(self.server.current_workers))
 
 api.add_resource(fetchRepository, "/repo", endpoint="repo")
@@ -89,11 +83,11 @@ class cyclomatic_complexity(Resource):
         self.reqparser.add_argument('complexity', type=float, location='json')
         
     def get(self):
-        if self.server.current_workers < self.server.number_of_workers:
+        if int(self.server.current_workers) < int(self.server.number_of_workers):
+            time.sleep(0.5)
             return {'sha': -2}
         if len(self.server.commit_list) == 0:
             return {'sha': -1}
-        
         commit_value = self.server.commit_list[0]
         del self.server.commit_list[0]
         return {'sha':commit_value}
